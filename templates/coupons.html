@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Nexan Games - 쿠폰함</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: #e0e0e0; margin: 0; padding: 20px; text-align: center; }
+        .coupon-container { max-width: 550px; margin: 5px auto; background: #1e1e1e; padding: 35px; border-radius: 12px; border: 1px solid #ff9900; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+        
+        h1 { color: #ff9900; margin-bottom: 10px; letter-spacing: 1px; }
+        .subtitle { color: #888; font-size: 0.9em; margin-bottom: 30px; }
+        
+        /* 쿠폰 입력 구역 */
+        .coupon-form { background: #252525; padding: 25px; border-radius: 8px; border: 1px solid #444; margin-bottom: 25px; }
+        .input-code { width: 100%; padding: 12px; background: #121212; border: 1px solid #555; border-radius: 4px; color: #fff; font-size: 1.1em; text-align: center; box-sizing: border-box; letter-spacing: 2px; text-transform: uppercase; }
+        .input-code:focus { border-color: #ff9900; outline: none; }
+        
+        .btn-redeem { width: 100%; padding: 12px; background: #ff9900; border: none; border-radius: 4px; color: #000; font-size: 1.1em; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.2s; }
+        .btn-redeem:hover { background: #e08800; }
+        
+        /* 기본 지급 가이드 */
+        .guide-box { background: #1a1a1a; padding: 15px; border-radius: 6px; border-left: 4px solid #ff9900; text-align: left; font-size: 0.85em; color: #aaa; line-height: 1.6; }
+        
+        .btn-back { display: inline-block; margin-top: 30px; padding: 10px 20px; background: #333; border: 1px solid #ff9900; color: #ff9900; text-decoration: none; border-radius: 6px; font-weight: bold; transition: 0.3s; }
+        .btn-back:hover { background: #ff9900; color: #000; }
+    </style>
+</head>
+<body>
+    <div class="coupon-container">
+        <h1>🎟️ 넥산 모험가 쿠폰함</h1>
+        <p class="subtitle">시크릿 보너스 코드를 입력하고 특별한 보상을 획득하세요!</p>
+
+        <div class="coupon-form">
+            <input type="text" id="coupon-code" class="input-code" placeholder="쿠폰 코드를 입력하세요" autocomplete="off">
+            <button class="btn-redeem" onclick="claimCoupon()">🎁 쿠폰 사용하기</button>
+        </div>
+
+        <div class="guide-box">
+            📌 <strong>쿠폰 사용 유의사항</strong><br>
+            • 모든 쿠폰 코드는 계정당 단 1회만 사용할 수 있습니다.<br>
+            • 이미 사용 완료 처리된 코드는 재등록이 불가능합니다.<br>
+            • 대소문자 구분 없이 입력하셔도 정상 처리됩니다.
+        </div>
+
+        <a href="/lobby" class="btn-back">🏰 로비로 돌아가기</a>
+    </div>
+
+    <script>
+        function claimCoupon() {
+            const codeInput = document.getElementById('coupon-code');
+            const code = codeInput.value.trim();
+
+            if (!code) {
+                alert("쿠폰 코드를 정확히 입력해 주세요!");
+                return;
+            }
+
+            // 비동기 fetch API로 백엔드에 쿠폰 검증 요청
+            fetch('/api/coupon/claim', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ coupon_code: code })
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                if (data.success) {
+                    codeInput.value = ''; // 성공 시 입력창 초기화
+                }
+            })
+            .catch(err => console.error("쿠폰 처리 오류:", err));
+        }
+    </script>
+</body>
+</html>

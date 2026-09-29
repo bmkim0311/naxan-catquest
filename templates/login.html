@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Nexan Games - 로그인</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #121212; color: #e0e0e0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: #1e1e1e; padding: 40px; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); width: 360px; border: 1px solid #ff9900; text-align: center; }
+        h1 { color: #ff9900; margin-bottom: 5px; font-size: 2em; letter-spacing: 3px; }
+        p.subtitle { color: #888; font-size: 0.85em; margin-bottom: 35px; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; margin-bottom: 8px; color: #aaa; font-size: 0.9em; }
+        input { width: 100%; padding: 12px; background: #2d2d2d; border: 1px solid #444; border-radius: 5px; color: #fff; box-sizing: border-box; font-size: 1em; }
+        input:focus { border-color: #ff9900; outline: none; }
+        .btn { width: 100%; padding: 12px; background: #ff9900; border: none; border-radius: 5px; color: #000; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn:hover { background: #e08800; }
+        .link { margin-top: 20px; font-size: 0.9em; }
+        .link a { color: #ff9900; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>NEXAN GAMES</h1>
+        <p class="subtitle">SECURITY & INFRA GAME PLATFORM</p>
+        <form action="/login" method="POST">
+            <div class="input-group">
+                <label for="username">계정 아이디 (ID)</label>
+                <input type="text" id="username" name="username" required placeholder="아이디">
+            </div>
+            <div class="input-group">
+                <label for="password">비밀번호 (PASSWORD)</label>
+                <input type="password" id="password" name="password" required placeholder="비밀번호">
+            </div>
+            <button type="submit" class="btn">게임 스타트</button>
+        </form>
+        <div class="link">
+            신규 모험가이신가요? <a href="/register">회원가입</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- 브라우저 탭 제목 -->
+    <title>Nexan Games - 공지 상세</title>
+
+    <style>
+        /* =========================
+           전체 페이지 기본 설정
+        ========================= */
+        body {
+            margin: 0;
+            padding: 0;
+            background:
+                radial-gradient(circle at top, rgba(56, 189, 248, 0.12), transparent 35%),
+                #0f172a;
+            color: #e5e7eb;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* =========================
+           전체 콘텐츠 영역
+        ========================= */
+        .detail-page {
+            width: 1000px;
+            margin: 0 auto;
+            padding: 45px 20px 60px 20px;
+            box-sizing: border-box;
+        }
+
+        /* =========================
+           상단 제목 영역
+        ========================= */
+        .detail-header {
+            padding: 24px 30px;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #1e293b, #111827);
+            border: 1px solid #334155;
+            border-radius: 14px;
+            box-shadow: 0 0 22px rgba(56, 189, 248, 0.08);
+        }
+
+        /* 페이지 제목 */
+        .detail-header h1 {
+            margin: 0;
+            color: #7dd3fc;
+            font-size: 32px;
+            letter-spacing: 1px;
+        }
+
+        /* 페이지 설명 */
+        .detail-header p {
+            margin: 8px 0 0 0;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* =========================
+           상단 이동 영역
+        ========================= */
+        .detail-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        /* 현재 위치 표시 */
+        .detail-location {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* 로비 이동 버튼 */
+        .lobby-btn {
+            display: inline-block;
+            padding: 10px 18px;
+            background: #020617;
+            border: 1px solid #38bdf8;
+            border-radius: 8px;
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* 로비 이동 버튼 hover */
+        .lobby-btn:hover {
+            background: #38bdf8;
+            color: #020617;
+            transition: 0.2s;
+        }
+
+        /* =========================
+           상세 게시글 박스
+        ========================= */
+        .detail-board {
+            background: rgba(15, 23, 42, 0.82);
+            border: 1px solid #334155;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        /* 상세 제목 영역 */
+        .detail-title-area {
+            padding: 24px 28px;
+            background: #111827;
+            border-bottom: 1px solid #334155;
+            box-sizing: border-box;
+        }
+
+        /* 상세 제목 */
+        .detail-title {
+            margin: 0 0 12px 0;
+            color: #f8fafc;
+            font-size: 24px;
+
+            /*
+                제목이 공백 없이 길어도
+                박스 밖으로 튀어나가지 않게 강제 줄바꿈
+            */
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        /* 상세 메타 정보 */
+        .detail-meta {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* =========================
+           상세 본문 영역
+        ========================= */
+        .detail-content {
+            min-height: 220px;
+            padding: 32px 28px;
+            color: #e2e8f0;
+            font-size: 16px;
+            line-height: 1.8;
+
+            /*
+                사용자가 입력한 줄바꿈은 유지하되,
+                내용이 길어지면 자연스럽게 줄바꿈
+            */
+            white-space: pre-wrap;
+
+            /*
+                공백 없는 긴 문자열도
+                박스 밖으로 튀어나가지 않게 강제 줄바꿈
+            */
+            overflow-wrap: anywhere;
+            word-break: break-word;
+
+            max-width: 100%;
+            box-sizing: border-box;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        /* =========================
+           공지 배너 썸네일 영역
+        ========================= */
+        .thumbnail-area {
+            padding: 22px 28px;
+            background: rgba(2, 6, 23, 0.45);
+            border-bottom: 1px solid #1f2937;
+            box-sizing: border-box;
+        }
+
+        /* 썸네일 영역 제목 */
+        .thumbnail-area strong {
+            display: block;
+            color: #7dd3fc;
+            margin-bottom: 12px;
+        }
+
+        /* 썸네일 이미지 */
+        .thumbnail-img {
+            max-width: 420px;
+            max-height: 220px;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            background: #020617;
+            display: block;
+        }
+
+        /* 썸네일이 깨졌을 때 안내 */
+        .thumbnail-help {
+            margin-top: 10px;
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           이미지 처리 로그 영역
+        ========================= */
+        .image-log-area {
+            padding: 22px 28px;
+            background: rgba(15, 23, 42, 0.75);
+            border-bottom: 1px solid #1f2937;
+            box-sizing: border-box;
+        }
+
+        /* 이미지 처리 로그 제목 */
+        .image-log-area strong {
+            display: block;
+            color: #facc15;
+            margin-bottom: 12px;
+        }
+
+        /* 이미지 처리 로그 출력 박스 */
+        .image-log-box {
+            margin: 0;
+            padding: 14px;
+            background: #020617;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #cbd5e1;
+            font-size: 13px;
+            line-height: 1.6;
+
+            /*
+                로그가 길거나 공백 없는 문자열이어도
+                화면 밖으로 튀어나가지 않게 처리
+            */
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        /* =========================
+           첨부파일 영역
+        ========================= */
+        .detail-attachment {
+            padding: 18px 28px;
+            background: rgba(2, 6, 23, 0.65);
+            border-bottom: 1px solid #1f2937;
+            box-sizing: border-box;
+
+            /*
+                첨부파일 이름이 길어도 영역 밖으로 나가지 않게 처리
+            */
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        /* 첨부파일 제목 */
+        .detail-attachment strong {
+            color: #7dd3fc;
+        }
+
+        /* 첨부파일 이름 링크 */
+        .file-link {
+            display: inline-block;
+            margin-left: 8px;
+            color: #facc15;
+            text-decoration: none;
+            font-weight: bold;
+
+            /*
+                첨부파일 이름이 길어도 강제 줄바꿈
+            */
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        /* 첨부파일 이름 링크 hover */
+        .file-link:hover {
+            text-decoration: underline;
+        }
+
+        /* 첨부파일 안내 문구 */
+        .attachment-help {
+            margin-top: 10px;
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           버튼 영역
+        ========================= */
+        .detail-buttons {
+            padding: 22px 28px;
+            text-align: right;
+            background: rgba(15, 23, 42, 0.75);
+        }
+
+        /* 목록 버튼 */
+        .list-btn {
+            display: inline-block;
+            padding: 11px 20px;
+            background: #020617;
+            border: 1px solid #38bdf8;
+            border-radius: 8px;
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* 목록 버튼 hover */
+        .list-btn:hover {
+            background: #38bdf8;
+            color: #020617;
+            transition: 0.2s;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 공지 상세 전체 영역 -->
+    <div class="detail-page">
+
+        <!-- 상단 제목 영역 -->
+        <div class="detail-header">
+            <h1>📢 공지사항</h1>
+            <p>Nexan Games 공지사항 상세 내용입니다.</p>
+        </div>
+
+        <!-- 현재 위치 및 로비 이동 버튼 -->
+        <div class="detail-toolbar">
+            <div class="detail-location">
+                HOME &gt; LOBBY &gt; NOTICE &gt; DETAIL
+            </div>
+
+            <a href="/lobby" class="lobby-btn">← 로비로 돌아가기</a>
+        </div>
+
+        <!-- 공지 상세 게시글 영역 -->
+        <div class="detail-board">
+
+            <!-- 공지 제목 및 작성 정보 -->
+            <div class="detail-title-area">
+                <h2 class="detail-title">{{ notice.title }}</h2>
+
+                <div class="detail-meta">
+                    작성자: 운영자 |
+                    작성일: {{ notice.created_at }}
+                </div>
+            </div>
+
+            <!-- 공지 본문 내용 -->
+            <div class="detail-content">{{ notice.content }}</div>
+
+            <!--
+                썸네일이 생성된 경우 표시한다.
+
+                이 썸네일은 관리자 페이지에서 첨부파일 업로드 후
+                서버가 ImageMagick convert 명령으로 자동 생성한 결과다.
+            -->
+            {% if notice.thumbnail_path %}
+                <div class="thumbnail-area">
+                    <strong>공지 배너 썸네일</strong>
+
+                    <img
+                        src="{{ notice.thumbnail_path }}"
+                        alt="공지 배너 썸네일"
+                        class="thumbnail-img"
+                    >
+
+                    <div class="thumbnail-help">
+                        ※ 업로드된 공지 배너 이미지를 서버가 자동으로 리사이즈하여 생성한 썸네일입니다.
+                    </div>
+                </div>
+            {% endif %}
+
+            <!--
+                이미지 처리 로그가 있으면 표시한다.
+
+                CTF 시연에서는 이 영역에서
+                썸네일 생성 명령의 실행 결과를 확인할 수 있다.
+            -->
+            {% if notice.thumbnail_log %}
+                <div class="image-log-area">
+                    <strong>이미지 처리 로그</strong>
+
+                    <pre class="image-log-box">{{ notice.thumbnail_log }}</pre>
+                </div>
+            {% endif %}
+
+            <!-- 첨부파일이 있을 때만 표시 -->
+            {% if notice.attachment_path %}
+                <div class="detail-attachment">
+                    <strong>첨부파일</strong>
+
+                    <!-- 원본 첨부파일을 새 탭에서 직접 여는 링크 -->
+                    <a href="{{ notice.attachment_path }}" target="_blank" class="file-link">
+                        {{ notice.attachment_name }}
+                    </a>
+
+                    <!-- 첨부파일 안내 -->
+                    <div class="attachment-help">
+                        ※ 첨부파일 원본을 새 탭에서 확인할 수 있습니다.
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- 하단 버튼 영역 -->
+            <div class="detail-buttons">
+                <a href="/notices" class="list-btn">목록으로 돌아가기</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

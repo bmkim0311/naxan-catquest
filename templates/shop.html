@@ -1,0 +1,495 @@
+<!--
+    Cat Quest 상점 페이지
+    파일 위치: templates/shop.html
+
+    이 페이지는 /shop 라우트에서 render_template()로 호출된다.
+    app.py에서 shop_items와 user 값을 넘겨준다.
+
+    사용 변수:
+    - shop_items: 상점 아이템 목록
+    - user.gold: 현재 유저가 보유한 골드
+-->
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- 브라우저 탭에 표시되는 제목 -->
+    <title>Nexan Games - 아이템 상점</title>
+
+    <style>
+        /*
+            전체 화면 기본 스타일
+            배경은 어두운 톤으로 유지하고, 상점 박스가 가운데 오도록 한다.
+        */
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /*
+            상점 전체를 감싸는 박스
+            기존 max-width: 800px은 너무 좁아서 1200px로 넓혔다.
+        */
+        .shop-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #ff9900;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            box-sizing: border-box;
+        }
+
+        /*
+            상점 제목과 보유 골드를 한 줄에 배치하는 영역
+        */
+        .shop-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #ff9900;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        /*
+            상점 제목
+        */
+        .shop-title {
+            color: #ff9900;
+            margin: 0;
+            letter-spacing: 1px;
+            font-size: 2.1rem;
+        }
+
+        /*
+            보유 골드 표시 박스
+            white-space: nowrap을 줘서 골드 문장이 줄바꿈되지 않게 한다.
+        */
+        .gold-display {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #ffff22;
+            background: #2d2d2d;
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 1px solid #444;
+            white-space: nowrap;
+        }
+
+        /*
+            상점 설명 문구
+        */
+        .shop-desc-text {
+            color: #888;
+            text-align: left;
+            margin-bottom: 25px;
+            font-size: 1rem;
+        }
+
+        /*
+            아이템 카드들을 배치하는 그리드
+            기존 코드의 table 구조를 제거하고 div grid로 정리했다.
+
+            auto-fit:
+            화면 크기에 따라 가능한 만큼 자동 배치한다.
+
+            minmax(230px, 1fr):
+            카드 최소 폭은 230px이고, 남는 공간은 균등하게 나눠 가진다.
+        */
+        .item-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 22px;
+            align-items: stretch;
+        }
+
+        /*
+            아이템 한 개 카드
+            카드 내부 요소들을 세로로 정렬하되, 버튼은 아래쪽에 안정적으로 위치하게 한다.
+        */
+        .item-card {
+            background: #252525;
+            border: 1px solid #444;
+            border-radius: 10px;
+            padding: 22px;
+            text-align: center;
+            transition: 0.3s;
+            box-sizing: border-box;
+            min-height: 310px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /*
+            카드에 마우스를 올렸을 때 효과
+        */
+        .item-card:hover {
+            border-color: #ff9900;
+            background: #2d2d2d;
+            transform: translateY(-3px);
+        }
+
+        /*
+            아이템 아이콘
+        */
+        .item-icon {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+        }
+
+        /*
+            아이템 이름
+            word-break: keep-all로 한글이 이상하게 끊기지 않게 한다.
+        */
+        .item-name {
+            font-size: 1.35em;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 8px;
+            word-break: keep-all;
+        }
+
+        /*
+            아이템 설명
+        */
+        .item-desc {
+            font-size: 0.95em;
+            color: #aaa;
+            margin: 10px 0 16px 0;
+            line-height: 1.4;
+        }
+
+        /*
+            재고와 일일 제한을 감싸는 영역
+        */
+        .item-info {
+            margin-bottom: 16px;
+        }
+
+        /*
+            남은 재고 표시
+        */
+        .item-stock {
+            color: #fff;
+            font-size: 0.95em;
+            margin-bottom: 6px;
+        }
+
+        /*
+            일일 구매 제한 표시
+        */
+        .item-limit {
+            color: #ff9900;
+            font-size: 0.95em;
+            margin-bottom: 8px;
+        }
+
+        /*
+            구매 버튼을 감싸는 a 태그
+            a 태그 기본 밑줄을 제거한다.
+        */
+        .buy-link {
+            text-decoration: none;
+            display: block;
+            margin-top: auto;
+        }
+
+        /*
+            구매 버튼
+            기존에는 버튼 폭이 좁아서 10000000 G 같은 긴 가격이 세로로 깨졌다.
+            width: 100%, white-space: nowrap으로 가격이 한 줄에 나오게 한다.
+        */
+        .btn-buy {
+            width: 100%;
+            min-height: 52px;
+            padding: 10px 12px;
+            background: #ff9900;
+            border: none;
+            border-radius: 6px;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 1rem;
+            line-height: 1.3;
+            white-space: nowrap;
+        }
+
+        /*
+            구매 버튼 hover 효과
+        */
+        .btn-buy:hover {
+            background: #e08800;
+        }
+
+        /*
+            로비로 돌아가기 버튼
+        */
+        .btn-back {
+            display: inline-block;
+            margin-top: 35px;
+            padding: 12px 24px;
+            background: #333;
+            border: 1px solid #ff9900;
+            color: #ff9900;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        /*
+            로비 버튼 hover 효과
+        */
+        .btn-back:hover {
+            background: #ff9900;
+            color: #000;
+        }
+
+        /*
+            모바일 화면 대응
+            화면이 좁으면 제목과 골드 박스가 자연스럽게 아래로 내려간다.
+        */
+        @media (max-width: 768px) {
+            .shop-container {
+                padding: 20px;
+            }
+
+            .shop-header {
+                justify-content: center;
+                text-align: center;
+            }
+
+            .shop-title {
+                font-size: 1.7rem;
+            }
+
+            .gold-display {
+                font-size: 1.05em;
+            }
+
+            .item-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .item-meta {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 12px 0 14px 0;
+        }
+
+        .meta-badge {
+            padding: 5px 9px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 900;
+            border: 1px solid #444;
+            background: #2a2a2a;
+        }
+
+        .meta-badge.category {
+            color: #7dd3fc;
+            border-color: rgba(125, 211, 252, 0.5);
+        }
+
+        .meta-badge.rarity {
+            color: #facc15;
+            border-color: rgba(250, 204, 21, 0.5);
+        }
+
+        .meta-badge.active {
+            color: #34d399;
+            border-color: rgba(52, 211, 153, 0.5);
+        }
+
+        .meta-badge.inactive {
+            color: #f87171;
+            border-color: rgba(248, 113, 113, 0.5);
+        }
+
+        .effect-box {
+            margin: 18px 0;
+            padding: 14px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.22);
+            border: 1px solid #444;
+        }
+
+        .effect-title {
+            color: #aaa;
+            font-size: 0.82rem;
+            margin-bottom: 6px;
+        }
+
+        .effect-value {
+            color: #f5f5f5;
+            font-size: 1rem;
+            font-weight: 900;
+        }
+
+        .item-level {
+            color: #7dd3fc;
+            font-size: 1rem;
+            font-weight: 800;
+            margin-top: 8px;
+        }
+
+        .btn-buy.disabled {
+            background: #555;
+            color: #bbb;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 상점 전체 박스 -->
+    <div class="shop-container">
+
+        <!-- 상단 제목 + 보유 골드 영역 -->
+        <div class="shop-header">
+            <h1 class="shop-title">🏪 넥산 프리미엄 상점</h1>
+
+            <!-- app.py에서 user 값을 넘겨받아 현재 골드를 출력한다. -->
+            <div class="gold-display">
+                💰 보유 골드:
+                <span id="current-gold">{{ user.gold }}</span>
+                G
+            </div>
+        </div>
+
+        <!-- 상점 설명 문구 -->
+        <p class="shop-desc-text">
+            던전에서 획득한 골드로 능력치를 영구적으로 업그레이드 하세요.
+        </p>
+
+        <!--
+            아이템 목록 영역
+
+            기존 zip 파일에는 table 안에 div가 들어가 있었는데,
+            HTML 구조상 보기 좋지 않아서 div grid 구조로 변경했다.
+        -->
+        <div class="item-grid">
+            {% for item in shop_items %}
+
+            <div class="item-card">
+
+                <div>
+                    <!-- 아이템 아이콘 -->
+                    <div class="item-icon">
+                        {% if item.icon and item.icon != 'gift' %}
+                            {{ item.icon }}
+                        {% else %}
+                            🎁
+                        {% endif %}
+                    </div>
+
+                    <!-- 아이템 이름 -->
+                    <div class="item-name">
+                        {{ item.item_name }}
+                    </div>
+
+                    <!-- 분류 / 등급 -->
+                    <div class="item-meta">
+                        <span class="meta-badge category">
+                            {{ item.item_category or '기타' }}
+                        </span>
+
+                        <span class="meta-badge rarity">
+                            {{ item.rarity or '일반' }}
+                        </span>
+
+                        {% if item.is_active == 1 %}
+                            <span class="meta-badge active">판매중</span>
+                        {% else %}
+                            <span class="meta-badge inactive">판매중지</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- 아이템 설명 -->
+                    <div class="item-desc">
+                        {% if item.description %}
+                            {{ item.description }}
+                        {% else %}
+                            상점 판매 아이템입니다.
+                        {% endif %}
+                    </div>
+
+                    <!-- 효과 정보 -->
+                    <div class="effect-box">
+                        <div class="effect-title">아이템 효과</div>
+
+                        {% if item.effect_type == 'attack_up' %}
+                            <div class="effect-value">⚔️ 공격력 +{{ item.effect_value }}</div>
+                        {% elif item.effect_type == 'hp_up' %}
+                            <div class="effect-value">❤️ 최대 체력 +{{ item.effect_value }}</div>
+                        {% elif item.effect_type == 'gold_bonus' %}
+                            <div class="effect-value">💰 골드 보너스 +{{ item.effect_value }}%</div>
+                        {% elif item.effect_type == 'heal' %}
+                            <div class="effect-value">🧪 체력 회복 +{{ item.effect_value }}</div>
+                        {% elif item.effect_type == 'stage_key' %}
+                            <div class="effect-value">🗝️ 스테이지 해금 아이템</div>
+                        {% else %}
+                            <div class="effect-value">효과 없음</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- 재고 / 일일 제한 / 필요 레벨 -->
+                    <div class="item-info">
+                        <div class="item-stock">
+                            남은 재고: {{ item.stock }}개
+                        </div>
+
+                        <div class="item-limit">
+                            일일 구매 제한: {{ item.daily_limit }}개
+                        </div>
+
+                        <div class="item-level">
+                            필요 레벨: Lv.{{ item.required_level or 1 }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 구매 버튼 -->
+                {% if item.is_active == 1 and item.stock > 0 %}
+                    <a href="/buy/{{ item.item_id }}" class="buy-link">
+                        <button class="btn-buy" type="button">
+                            💰 {{ item.price }} G 구매
+                        </button>
+                    </a>
+                {% elif item.is_active != 1 %}
+                    <button class="btn-buy disabled" type="button" disabled>
+                        판매중지
+                    </button>
+                {% else %}
+                    <button class="btn-buy disabled" type="button" disabled>
+                        품절
+                    </button>
+                {% endif %}
+            </div>
+
+            {% endfor %}
+        </div>
+	    
+        </div>
+
+        <!-- 로비 복귀 버튼 -->
+        <a href="/lobby" class="btn-back">🏰 로비로 돌아가기</a>
+    </div>
+</body>
+</html>

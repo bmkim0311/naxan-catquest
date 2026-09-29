@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Nexan Games - 로비</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .top-right-profile {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            z-index: 1000;
+        }
+
+        .profile-shortcut {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 16px;
+            background: #1e1e1e;
+            color: #ff9900;
+            border: 1px solid #ff9900;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 900;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+            transition: 0.2s;
+        }
+
+        .profile-shortcut:hover {
+            background: #ff9900;
+            color: #111;
+            transform: translateY(-2px);
+        }
+
+        .lobby-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding-top: 40px;
+        }
+
+        .user-profile {
+            background: #1e1e1e;
+            border: 1px solid #ff9900;
+            border-radius: 8px;
+            padding: 20px;
+            display: table;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 25px;
+        }
+
+        .profile-status {
+            display: table-cell;
+            width: 25%;
+            text-align: center;
+            border-right: 1px solid #333;
+        }
+
+        .profile-status:last-child {
+            border-right: none;
+        }
+
+        .status-label {
+            font-size: 0.85em;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+
+        .status-value {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .status-value.highlight {
+            color: #ff9900;
+        }
+
+        h2 {
+            color: #ff9900;
+            letter-spacing: 1px;
+            margin-top: 30px;
+            border-left: 4px solid #ff9900;
+            padding-left: 10px;
+        }
+
+        .menu-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 15px;
+            margin-top: 15px;
+        }
+
+        .menu-card {
+            background: #1e1e1e;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 33.33%;
+            vertical-align: top;
+        }
+
+        .menu-card:hover {
+            border-color: #ff9900;
+            background: #262626;
+            transform: translateY(-2px);
+        }
+
+        .menu-card h3 {
+            color: #fff;
+            margin: 0 0 10px 0;
+            font-size: 1.2em;
+        }
+
+        .menu-card p {
+            color: #888;
+            font-size: 0.85em;
+            margin: 0;
+        }
+
+        .dungeon-card {
+            border-left: 4px solid #ff3333;
+        }
+
+        .dungeon-card:hover {
+            border-left: 4px solid #ff3333;
+        }
+
+        .btn-logout {
+            display: block;
+            width: 150px;
+            margin: 40px auto 0 auto;
+            padding: 10px;
+            background: #333;
+            border: 1px solid #ff9900;
+            color: #ff9900;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #ff9900;
+            color: #000;
+        }
+
+        @media (max-width: 760px) {
+            .top-right-profile {
+                position: static;
+                margin-bottom: 16px;
+            }
+
+            .profile-shortcut {
+                width: 100%;
+                justify-content: center;
+                box-sizing: border-box;
+            }
+
+            .lobby-container {
+                padding-top: 0;
+            }
+
+            .user-profile {
+                display: block;
+            }
+
+            .profile-status {
+                display: block;
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #333;
+                padding: 12px 0;
+            }
+
+            .profile-status:last-child {
+                border-bottom: none;
+            }
+
+            .menu-table,
+            .menu-table tbody,
+            .menu-table tr,
+            .menu-table td {
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .menu-table {
+                border-spacing: 0;
+            }
+
+            .menu-card {
+                margin-bottom: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-right-profile">
+        <a href="/profile" class="profile-shortcut">
+            🐱 내 캐릭터
+        </a>
+    </div>
+
+    <div class="lobby-container">
+        <h1 style="color: #ff9900; text-align: center; letter-spacing: 2px;">
+            🏰 NEXAN GAMES LOBBY 🏰
+        </h1>
+
+        <p style="text-align: center; color: #888; font-size: 0.9em; margin-bottom: 30px;">
+            모험가 <strong>{{ user.username }}</strong>님, 환영합니다!
+        </p>
+
+        <div class="user-profile">
+            <div class="profile-status">
+                <div class="status-label">레벨 (LEVEL)</div>
+                <div class="status-value highlight">Lv. {{ user.level }}</div>
+            </div>
+
+            <div class="profile-status">
+                <div class="status-label">체력 (HP)</div>
+                <div class="status-value" style="color: #ff4444;">
+                    ❤️ {{ user.hp }} / {{ user.max_hp if user.max_hp else 100 }}
+                </div>
+            </div>
+
+            <div class="profile-status">
+                <div class="status-label">스태미나 (STAMINA)</div>
+                <div class="status-value" style="color: #22ff22;">
+                    ⚡ {{ user.stamina }} / 30
+                </div>
+            </div>
+
+            <div class="profile-status">
+                <div class="status-label">보유 골드 (GOLD)</div>
+                <div class="status-value" style="color: #ffff22;">
+                    💰 {{ user.gold }} G
+                </div>
+            </div>
+        </div>
+
+        <h2>⚔️ 모험 지역 (스테이지)</h2>
+
+        <table class="menu-table">
+            <tr>
+                <td class="menu-card dungeon-card" onclick="location.href='/stage/1'">
+                    <h3>🌲 1단계: 고양이 숲</h3>
+                    <p>제한시간 180초 | 목표: 열쇠를 찾고 던전 입구 도착</p>
+                </td>
+
+                <td class="menu-card dungeon-card" onclick="location.href='/stage/2'">
+                    <h3>🌋 2단계: 오래된 던전</h3>
+                    <p>제한시간 240초 | 목표: 던전을 돌파하여 출구 도착</p>
+                </td>
+
+                <td class="menu-card dungeon-card" onclick="location.href='/stage/3'">
+                    <h3>👑 3단계: 마왕의 방</h3>
+                    <p>제한시간 300초 | 목표: 최종 보스 그림자 고양이 처치</p>
+                </td>
+            </tr>
+        </table>
+
+        <h2>💼 유저 편의 및 시스템</h2>
+
+        <table class="menu-table">
+            <tr>
+                <td class="menu-card" onclick="location.href='/shop'">
+                    <h3>🏪 아이템 상점</h3>
+                    <p>무기 구매 및 능력치 업그레이드</p>
+                </td>
+
+                <td class="menu-card" onclick="location.href='/coupons'">
+                    <h3>🎟️ 쿠폰함</h3>
+                    <p>획득한 쿠폰 확인 및 등록</p>
+                </td>
+
+                <td class="menu-card" onclick="location.href='/mailbox'">
+                    <h3>📬 우편함</h3>
+                    <p>전투 보상 및 이벤트 보상 수령</p>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="menu-card" onclick="location.href='/friends'">
+                    <h3>🤝 친구 목록</h3>
+                    <p>친구 검색, 요청 및 캐릭터 정보 보기</p>
+                </td>
+
+                <td class="menu-card" onclick="location.href='/tutorial'">
+                    <h3>📘 튜토리얼</h3>
+                    <p>게임 진행 방법 및 시스템 안내</p>
+                </td>
+
+                <td class="menu-card" onclick="location.href='/notices'">
+                    <h3>📢 공지사항</h3>
+                    <p>운영자가 등록한 공지 및 첨부파일 확인</p>
+                </td>
+            </tr>
+        </table>
+
+        <a href="/logout" class="btn-logout">로그아웃</a>
+    </div>
+
+    <script>
+        setInterval(function () {
+            fetch('/api/heartbeat', {
+                method: 'POST'
+            }).catch(function () {});
+        }, 30000);
+    </script>
+</body>
+</html>

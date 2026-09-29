@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>내 캐릭터 정보 - CatQuest</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #151515;
+            color: #f5f5f5;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        .profile-wrap {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 30px;
+            border: 2px solid #f0a12b;
+            border-radius: 18px;
+            background: #1f1f1f;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 2px solid #f0a12b;
+            padding-bottom: 22px;
+            margin-bottom: 28px;
+        }
+
+        .profile-title {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .cat-avatar {
+            width: 86px;
+            height: 86px;
+            border-radius: 22px;
+            background: #2b2b2b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            border: 1px solid #444;
+        }
+
+        h1 {
+            margin: 0;
+            color: #f0a12b;
+            font-size: 2.1rem;
+        }
+
+        .subtitle {
+            margin-top: 8px;
+            color: #999;
+            font-size: 1rem;
+        }
+
+        .gold-badge {
+            padding: 15px 24px;
+            border-radius: 999px;
+            background: #2b2b2b;
+            border: 1px solid #444;
+            color: #ffff66;
+            font-size: 1.35rem;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .section-title {
+            margin: 32px 0 18px 0;
+            color: #f0a12b;
+            font-size: 1.45rem;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: #242424;
+            border: 1px solid #444;
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            position: absolute;
+            right: 14px;
+            bottom: 8px;
+            font-size: 3rem;
+            opacity: 0.13;
+        }
+
+        .stat-card.level::after {
+            content: "⭐";
+        }
+
+        .stat-card.attack::after {
+            content: "⚔️";
+        }
+
+        .stat-card.hp::after {
+            content: "❤️";
+        }
+
+        .stat-card.stamina::after {
+            content: "⚡";
+        }
+
+        .stat-card.stage::after {
+            content: "🏰";
+        }
+
+        .stat-card.bonus::after {
+            content: "💰";
+        }
+
+        .stat-label {
+            color: #aaa;
+            font-size: 0.9rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            color: #fff;
+            font-size: 1.8rem;
+            font-weight: 900;
+        }
+
+        .stat-desc {
+            margin-top: 8px;
+            color: #777;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .hp-bar {
+            margin-top: 12px;
+            width: 100%;
+            height: 12px;
+            background: #333;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .hp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ef4444, #f97316);
+            border-radius: 999px;
+        }
+
+        .item-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .item-card {
+            background: #242424;
+            border: 1px solid #444;
+            border-radius: 16px;
+            padding: 18px;
+        }
+
+        .item-top {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .item-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 15px;
+            background: #151515;
+            border: 1px solid #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .item-name {
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .item-date {
+            color: #777;
+            font-size: 0.82rem;
+            margin-top: 4px;
+        }
+
+        .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        .badge {
+            padding: 5px 9px;
+            border-radius: 999px;
+            background: #303030;
+            border: 1px solid #555;
+            font-size: 0.78rem;
+            font-weight: 900;
+        }
+
+        .badge.category {
+            color: #7dd3fc;
+            border-color: rgba(125, 211, 252, 0.45);
+        }
+
+        .badge.rarity {
+            color: #facc15;
+            border-color: rgba(250, 204, 21, 0.45);
+        }
+
+        .badge.effect {
+            color: #34d399;
+            border-color: rgba(52, 211, 153, 0.45);
+        }
+
+        .item-desc {
+            color: #aaa;
+            line-height: 1.5;
+            font-size: 0.92rem;
+            min-height: 42px;
+        }
+
+        .use-btn {
+            width: 100%;
+            padding: 11px 14px;
+            border: none;
+            border-radius: 10px;
+            background: #f0a12b;
+            color: #111;
+            font-weight: 900;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 14px;
+        }
+
+        .use-btn:hover {
+            background: #ffc15a;
+            transform: translateY(-1px);
+        }
+
+        .passive-label {
+            margin-top: 14px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: rgba(240, 161, 43, 0.12);
+            border: 1px solid rgba(240, 161, 43, 0.35);
+            color: #f0a12b;
+            text-align: center;
+            font-size: 0.86rem;
+            font-weight: 900;
+        }
+
+        .empty-box {
+            padding: 35px;
+            border-radius: 16px;
+            background: #242424;
+            border: 1px dashed #555;
+            color: #777;
+            text-align: center;
+            line-height: 1.7;
+        }
+
+        .btn-row {
+            margin-top: 34px;
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 22px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 900;
+        }
+
+        .btn-primary {
+            background: #f0a12b;
+            color: #111;
+        }
+
+        .btn-outline {
+            border: 1px solid #f0a12b;
+            color: #f0a12b;
+        }
+
+        @media (max-width: 700px) {
+            .profile-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .gold-badge {
+                width: 100%;
+                box-sizing: border-box;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="profile-wrap">
+
+        <div class="profile-header">
+            <div class="profile-title">
+                <div class="cat-avatar">🐱</div>
+
+                <div>
+                    <h1>{{ user.username }}님의 캐릭터</h1>
+                    <div class="subtitle">
+                        CatQuest 모험가 프로필 / 능력치 / 보유 아이템
+                    </div>
+                </div>
+            </div>
+
+            <div class="gold-badge">
+                💰 {{ user.gold }} G
+            </div>
+        </div>
+
+        <h2 class="section-title">📊 캐릭터 상태</h2>
+
+        <div class="stat-grid">
+            <div class="stat-card level">
+                <div class="stat-label">레벨</div>
+                <div class="stat-value">Lv.{{ user.level }}</div>
+                <div class="stat-desc">
+                    아이템 효과와 게임 진행에 따라 증가합니다.
+                </div>
+            </div>
+
+            <div class="stat-card attack">
+                <div class="stat-label">공격력</div>
+                <div class="stat-value">{{ user.attack_power }}</div>
+                <div class="stat-desc">
+                    기본 공격력 {{ user.base_attack }} + 레벨 기반 보정
+                </div>
+            </div>
+
+            <div class="stat-card hp">
+                <div class="stat-label">체력</div>
+                <div class="stat-value">{{ user.hp }} / {{ user.max_hp }}</div>
+
+                {% set hp_percent = (user.hp / user.max_hp * 100) if user.max_hp else 0 %}
+                <div class="hp-bar">
+                    <div class="hp-fill" style="width: {{ hp_percent }}%;"></div>
+                </div>
+
+                <div class="stat-desc">
+                    회복 아이템이나 최대 체력 증가 아이템의 영향을 받습니다.
+                </div>
+            </div>
+
+            <div class="stat-card stamina">
+                <div class="stat-label">스태미나</div>
+                <div class="stat-value">{{ user.stamina }}</div>
+                <div class="stat-desc">
+                    스테이지 이동 시 소모됩니다.
+                </div>
+            </div>
+
+            <div class="stat-card stage">
+                <div class="stat-label">클리어 스테이지</div>
+                <div class="stat-value">{{ user.cleared_stage }}단계</div>
+                <div class="stat-desc">
+                    현재까지 클리어하거나 해금한 최고 단계입니다.
+                </div>
+            </div>
+
+            <div class="stat-card bonus">
+                <div class="stat-label">골드 보너스</div>
+                <div class="stat-value">+{{ user.gold_bonus or 0 }}%</div>
+                <div class="stat-desc">
+                    전투 보상 골드에 추가 적용됩니다.
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">🎒 보유 아이템</h2>
+
+        {% if inventory_items %}
+            <div class="item-grid">
+                {% for item in inventory_items %}
+                    <div class="item-card">
+                        <div class="item-top">
+                            <div class="item-icon">
+                                {% if item.icon and item.icon != 'gift' %}
+                                    {{ item.icon }}
+                                {% else %}
+                                    🎁
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <div class="item-name">{{ item.item_name }}</div>
+                                <div class="item-date">인벤토리 보유 중</div>
+                            </div>
+                        </div>
+
+                        <div class="badge-row">
+                            <span class="badge category">{{ item.item_category or '기타' }}</span>
+                            <span class="badge rarity">{{ item.rarity or '일반' }}</span>
+
+                            {% if item.effect_type == 'attack_up' %}
+                                <span class="badge effect">공격력 +{{ item.effect_value }}</span>
+                            {% elif item.effect_type == 'hp_up' %}
+                                <span class="badge effect">최대 HP +{{ item.effect_value }}</span>
+                            {% elif item.effect_type == 'gold_bonus' %}
+                                <span class="badge effect">골드 +{{ item.effect_value }}%</span>
+                            {% elif item.effect_type == 'heal' %}
+                                <span class="badge effect">회복 +{{ item.effect_value }}</span>
+                            {% elif item.effect_type == 'stage_key' %}
+                                <span class="badge effect">스테이지 해금</span>
+                            {% else %}
+                                <span class="badge effect">효과 없음</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="item-desc">
+                            {% if item.description %}
+                                {{ item.description }}
+                            {% else %}
+                                설명이 등록되지 않은 아이템입니다.
+                            {% endif %}
+                        </div>
+
+                        {% if item.effect_type == 'heal' or item.effect_type == 'stage_key' %}
+                            <form method="POST" action="/inventory/use/{{ item.inventory_id }}">
+                                <button type="submit" class="use-btn">
+                                    사용하기
+                                </button>
+                            </form>
+                        {% elif item.effect_type == 'attack_up' or item.effect_type == 'hp_up' or item.effect_type == 'gold_bonus' %}
+                            <div class="passive-label">
+                                구매 시 이미 적용된 패시브 효과
+                            </div>
+                        {% else %}
+                            <div class="passive-label">
+                                사용 효과 없음
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-box">
+                아직 보유한 아이템이 없습니다.<br>
+                상점에서 아이템을 구매하면 이곳에 표시됩니다.
+            </div>
+        {% endif %}
+
+        <h2 class="section-title">🧾 구매 기록</h2>
+
+        {% if purchased_items %}
+            <div class="item-grid">
+                {% for item in purchased_items %}
+                    <div class="item-card">
+                        <div class="item-top">
+                            <div class="item-icon">
+                                {% if item.icon and item.icon != 'gift' %}
+                                    {{ item.icon }}
+                                {% else %}
+                                    🎁
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <div class="item-name">{{ item.item_name }}</div>
+                                <div class="item-date">
+                                    {{ item.purchased_at }} / {{ item.price }} G
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="badge-row">
+                            <span class="badge category">{{ item.item_category or '기타' }}</span>
+                            <span class="badge rarity">{{ item.rarity or '일반' }}</span>
+
+                            {% if item.effect_type == 'attack_up' %}
+                                <span class="badge effect">공격력 +{{ item.effect_value }}</span>
+                            {% elif item.effect_type == 'hp_up' %}
+                                <span class="badge effect">최대 HP +{{ item.effect_value }}</span>
+                            {% elif item.effect_type == 'gold_bonus' %}
+                                <span class="badge effect">골드 +{{ item.effect_value }}%</span>
+                            {% elif item.effect_type == 'heal' %}
+                                <span class="badge effect">회복 +{{ item.effect_value }}</span>
+                            {% elif item.effect_type == 'stage_key' %}
+                                <span class="badge effect">스테이지 해금</span>
+                            {% else %}
+                                <span class="badge effect">효과 없음</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="item-desc">
+                            {% if item.description %}
+                                {{ item.description }}
+                            {% else %}
+                                구매 기록에 남아 있는 아이템입니다.
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-box">
+                아직 구매 기록이 없습니다.
+            </div>
+        {% endif %}
+
+        <div class="btn-row">
+            <a href="/lobby" class="btn btn-primary">🏰 로비로 돌아가기</a>
+            <a href="/shop" class="btn btn-outline">🛒 상점으로 가기</a>
+        </div>
+    </div>
+</body>
+</html>
